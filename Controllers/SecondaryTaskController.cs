@@ -1,116 +1,98 @@
-﻿using Data_Access_Layer.Data;
-using Data_Access_Layer.Data.Models;
+﻿using Business_access_layer.Services;
+using Data_Access_Layer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Project.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class SecondaryTaskController : ControllerBase
     {
-        private readonly masterContext _context;
-
-        public SecondaryTaskController(masterContext context)
+        public readonly ServiceSecondaryTask _service;
+        public SecondaryTaskController(ServiceSecondaryTask service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/<SecondaryTaskController>
         [HttpGet]
-        public async Task<IEnumerable> GetAsync()
+        public  IEnumerable GetAsync()
         {
-            return await _context.SecondaryTasks.ToListAsync();
+            return _service.GetAllTasks();
         }
 
         // GET api/<SecondaryTaskController>/5
         [HttpGet("{id}")]
-        public async Task<IEnumerable> GetAsync(int id)
+        public SecondaryTask GetAsync(int id)
         {
-            return await _context.SecondaryTasks.Where(x => x.Id == id).ToListAsync();
+            return _service.GetTask(id);
         }
 
         // POST api/<SecondaryTaskController>
         [HttpPost]
-        public async Task<bool> PostAsync(SecondaryTask secondaryTask)
+        public Task<SecondaryTask> PostAsync(SecondaryTask secondaryTask)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(secondaryTask);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return _service.AddTask(secondaryTask);
         }
 
         // PUT api/<SecondaryTaskController>/5
         [HttpPut("{id}")]
-        public async Task<bool> PutAsync(int id, SecondaryTask secondaryTask)
+        public Task<bool> PutAsync(int id, SecondaryTask secondaryTask)
         {
             if (id != secondaryTask.Id)
             {
-                return false;
+                return Task.FromResult(false);
             }
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(secondaryTask);
-                    await _context.SaveChangesAsync();
+                    _service.UpdateTask(id);
+                   
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!SecondaryTaskExists(secondaryTask.Id))
                     {
-                        return false;
+                        return Task.FromResult(false);
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return true;
+                return Task.FromResult(true);
             }
             else
             {
-                return false;
+                return Task.FromResult(false);
             }
         }
 
-        private bool SecondaryTaskExists(int id)
-        {
-            return (_context.SecondaryTasks?.Any(e => e.Id == id)).GetValueOrDefault();
+        private bool SecondaryTaskExists(int id) {
+            if(_service.GetTask(id) == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         // DELETE api/<SecondaryTaskController>/5
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
-            if (id == 0 || _context.SecondaryTasks == null)
+            if (id == 0 || _service.GetTask(id) == null)
             {
-                return false;
+                return Task.FromResult(false);
             }
+            _service.DeleteTask(id);
 
-            var secondaryTask = await _context.SecondaryTasks
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (secondaryTask == null)
-            {
-                return false;
-            }
-            else
-            {
-                _context.SecondaryTasks.Remove(secondaryTask);
-            }
-
-            await _context.SaveChangesAsync();
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

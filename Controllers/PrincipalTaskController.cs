@@ -1,7 +1,6 @@
-﻿using Data_Access_Layer.Data;
-using Data_Access_Layer.Data.Models;
+﻿using Business_access_layer.Services;
+using Data_Access_Layer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
@@ -12,104 +11,88 @@ namespace Project.Controllers
     [ApiController]
     public class PrincipalTaskController : ControllerBase
     {
-        private readonly masterContext _context;
-
-        public PrincipalTaskController(masterContext context)
+        public readonly ServicePrincipalTask _service;
+        public PrincipalTaskController(ServicePrincipalTask service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/<PrincipalTaskController>
         [HttpGet]
-        public async Task<IEnumerable> GetAsync()
+        public IEnumerable GetAsync()
         {
-            return await _context.PrincipalTasks.ToListAsync();
+            return _service.GetAllTasks();
         }
 
         // GET api/<PrincipalTaskController>/5
         [HttpGet("{id}")]
-        public async Task<IEnumerable> GetAsync(int id)
+        public PrincipalTask GetAsync(int id)
         {
-            return await _context.PrincipalTasks.Where(x => x.Id == id).ToListAsync();
+            return _service.GetTask(id);
         }
 
         // POST api/<PrincipalTaskController>
         [HttpPost]
-        public async Task<bool> PostAsync(PrincipalTask principalTask)
+        public Task<PrincipalTask> PostAsync(PrincipalTask principalTask)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(principalTask);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            else {
-                return false; 
-            }
+            return _service.AddTask(principalTask);
         }
 
         // PUT api/<PrincipalTaskController>/5
         [HttpPut("{id}")]
-        public async Task<bool> PutAsync(int id, PrincipalTask principalTask)
+        public Task<bool> PutAsync(int id, PrincipalTask principalTask)
         {
             if (id != principalTask.Id)
             {
-                return false;
+                return Task.FromResult(false);
             }
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(principalTask);
-                    await _context.SaveChangesAsync();
+                    _service.UpdateTask(id);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!PrincipalTaskExists(principalTask.Id))
                     {
-                        return false;
+                        return Task.FromResult(false);
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return true;
+                return Task.FromResult(true);
             }
             else
             {
-                return false;
+                return Task.FromResult(false);
             }
         }
 
         private bool PrincipalTaskExists(int id)
         {
-            return (_context.PrincipalTasks?.Any(e => e.Id == id)).GetValueOrDefault();
+            if (_service.GetTask(id) == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         // DELETE api/<PrincipalTaskController>/5
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
-            if (id == 0 || _context.PrincipalTasks == null)
+            if (id == 0 || _service.GetTask(id) == null)
             {
-                return false;
+                return Task.FromResult(false);
             }
+            _service.DeleteTask(id);
 
-            var principalTask = await _context.PrincipalTasks
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (principalTask == null)
-            {
-                return false;
-            }
-            else
-            {
-                _context.PrincipalTasks.Remove(principalTask);
-            }
-
-            await _context.SaveChangesAsync();
-            return true;
+            return Task.FromResult(true);
         }
     }
 }
