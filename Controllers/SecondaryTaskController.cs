@@ -25,6 +25,15 @@ namespace Project.Controllers
             return _service.GetAllTasks();
         }
 
+    
+
+        // GET api/<SecondaryTaskController>/5
+        [HttpGet("/childs/{id}")]
+        public IEnumerable GetChildsTask(int id)
+        {
+            return _service.GetChilds(id);
+        }
+
         // GET api/<SecondaryTaskController>/5
         [HttpGet("{id}")]
         public SecondaryTask GetAsync(int id)
