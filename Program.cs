@@ -2,7 +2,14 @@ using Business_access_layer.Services;
 using Data_Access_Layer.Data;
 using Data_Access_Layer.Repositories;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
+{
+    build.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+}));
+
 
 builder.Services.AddDbContext<masterContext>();
 // Add services to the container.
@@ -30,6 +37,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("corspolicy");
 app.UseAuthorization();
 
 app.MapControllers();
