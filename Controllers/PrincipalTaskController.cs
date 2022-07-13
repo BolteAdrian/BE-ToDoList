@@ -40,17 +40,15 @@ namespace Project.Controllers
 
         // PUT api/<PrincipalTaskController>/5
         [HttpPut("{id}")]
-        public Task<bool> PutAsync(int id, PrincipalTask principalTask)
+        public Task<bool> PutAsync(int id,PrincipalTask principalTask)
         {
-            if (id != principalTask.Id)
-            {
-                return Task.FromResult(false);
-            }
+           
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.UpdateTask(id);
+                    principalTask.Id = id;
+                    _service.UpdateTask(principalTask);
 
                 }
                 catch (DbUpdateConcurrencyException)

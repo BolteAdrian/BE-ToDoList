@@ -52,16 +52,13 @@ namespace Project.Controllers
         [HttpPut("{id}")]
         public Task<bool> PutAsync(int id, SecondaryTask secondaryTask)
         {
-            if (id != secondaryTask.Id)
-            {
-                return Task.FromResult(false);
-            }
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.UpdateTask(id);
-                   
+                    secondaryTask.Id = id;
+                    _service.UpdateTask(secondaryTask);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
