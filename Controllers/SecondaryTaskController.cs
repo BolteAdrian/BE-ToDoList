@@ -48,14 +48,7 @@ namespace Project.Controllers
         [HttpGet("/childs/{id}")]
         public IEnumerable GetChildsTask(int id)
         {
-            if (_service.GetChilds(id) == null)
-            {
-                return null;
-            }
-            else
-            {
-                return _service.GetChilds(id);
-            }
+             return _service.GetChilds(id);
         }
 
         /// <summary>
@@ -67,13 +60,7 @@ namespace Project.Controllers
         [HttpGet("{id}")]
         public SecondaryTask GetAsync(int id)
         {
-            if (_service.GetTask(id) == null)
-            {
-               return null;
-            }
-            else { 
                 return _service.GetTask(id);
-                  }
         }
         
 
