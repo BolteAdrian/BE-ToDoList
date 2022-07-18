@@ -24,6 +24,6 @@ Use Modals to create or update a task
 
 
 
-Data Base
+Database
 
 ![ToDoListDB](https://user-images.githubusercontent.com/87446991/179509437-74bb60c9-8966-4416-b130-e16017b8c087.png)
