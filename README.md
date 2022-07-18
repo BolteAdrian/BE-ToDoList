@@ -3,6 +3,7 @@ BE for a to do list with .net 6 with 3-tier arhitecture and angular
 FE link : https://github.com/BolteAdrian/FE-ToDoList
 
 
+
 Tasks:
 Create database 
 Create .NET Project with .NET 6
@@ -20,8 +21,6 @@ Create Angular Project
 [FE[ CRUD Tasks with Backend communication
 Use Modals to create or update a task
 [FE] Create Task Details Page
-
-
 
 
 Database
