@@ -139,12 +139,7 @@ namespace Business_access_layer.Services
             {
                 if (id != 0)
                 {
-                    if (_repository.GetChildTask(id).ToList() != null){
-                        return null;
-                    }
-                    else {
                         return _repository.GetChildTask(id);
-                    }
                 }
                 else return null;
             }
@@ -157,14 +152,7 @@ namespace Business_access_layer.Services
         {
             try
             {
-                if (_repository.GetById(id) != null)
-                {
-                    return null;
-                }
-                else
-                {
                     return _repository.GetById(id);
-                }
             }
             catch (Exception)
             {
