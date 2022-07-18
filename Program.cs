@@ -11,11 +11,11 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
     build.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
 }));
 
+
 builder.Services.AddDbContext<masterContext>(options =>
 {
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
-
 
 // Add services to the container.
 

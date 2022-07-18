@@ -27,15 +27,7 @@ namespace Project.Controllers
         [HttpGet]
         public  IEnumerable GetAsync()
         {
-            if(_service.GetAllTasks() == null)
-            {
-                return null;
-            }
-            else
-            {
                return _service.GetAllTasks();
-            }
-           
         }
 
 
@@ -48,14 +40,7 @@ namespace Project.Controllers
         [HttpGet("/childs/{id}")]
         public IEnumerable GetChildsTask(int id)
         {
-            if (_service.GetChilds(id) == null)
-            {
-                return null;
-            }
-            else
-            {
-                return _service.GetChilds(id);
-            }
+                return _service.GetChilds(id);  
         }
 
         /// <summary>
@@ -67,13 +52,7 @@ namespace Project.Controllers
         [HttpGet("{id}")]
         public SecondaryTask GetAsync(int id)
         {
-            if (_service.GetTask(id) == null)
-            {
-               return null;
-            }
-            else { 
                 return _service.GetTask(id);
-                  }
         }
         
 
@@ -84,15 +63,15 @@ namespace Project.Controllers
         /// <returns></returns>
         // POST api/<SecondaryTaskController>
         [HttpPost]
-        public async Task<ActionResult> PostAsync(SecondaryTask secondaryTask)
+        public async Task<SecondaryTask> PostAsync(SecondaryTask secondaryTask)
         {
             if (secondaryTask != null)
             {
-                return StatusCode(StatusCodes.Status200OK, await _service.AddTask(secondaryTask));
+                return await _service.AddTask(secondaryTask);
             }
             else
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The task is empty");
+                return null;
             }
         }
 
@@ -104,7 +83,7 @@ namespace Project.Controllers
         /// <returns></returns>
         // PUT api/<SecondaryTaskController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutAsync(int id, SecondaryTask secondaryTask)
+        public  Task<bool> PutAsync(int id, SecondaryTask secondaryTask)
         {
             if (ModelState.IsValid)
             {
@@ -113,21 +92,22 @@ namespace Project.Controllers
                     secondaryTask.Id = id;
                     if (!SecondaryTaskExists(secondaryTask.Id))
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest, "The task doesn t exist");
+                        return Task.FromResult(false);
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status200OK, await _service.UpdateTask(secondaryTask));
+                        _service.UpdateTask(secondaryTask);
+                        return Task.FromResult(true);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    return StatusCode(StatusCodes.Status400BadRequest, e.Message);
-                }
+                    throw;
+ ;                }
             }
             else
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The task is not valid");
+                return Task.FromResult(false);
             }
         }
 
@@ -155,13 +135,15 @@ namespace Project.Controllers
         /// <returns></returns>
         // DELETE api/<SecondaryTaskController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
             if (SecondaryTaskExists(id) == false)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The id is null or the object doesn t exist");
+                return Task.FromResult(false);
             }
-            return StatusCode(StatusCodes.Status200OK, await _service.DeleteTask(id));
+                 _service.DeleteTask(id);
+                return Task.FromResult(true);
+
         }
     }
 }

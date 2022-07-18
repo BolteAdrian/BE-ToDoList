@@ -1,6 +1,7 @@
 ﻿using Business_access_layer.Services;
 using Data_Access_Layer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
 namespace Project.Controllers
@@ -26,14 +27,7 @@ namespace Project.Controllers
         [HttpGet]
         public IEnumerable GetAsync()
         {
-            if (_service.GetAllTasks() == null)
-            {
-                return null;
-            }
-            else
-            {
                 return _service.GetAllTasks();
-            }
         }
 
         /// <summary>
@@ -61,17 +55,18 @@ namespace Project.Controllers
         /// <returns></returns>
         // POST api/<PrincipalTaskController>
         [HttpPost]
-        public async Task<ActionResult> PostAsync(PrincipalTask principalTask)
+        public async Task<PrincipalTask> PostAsync(PrincipalTask principalTask)
         {
             if (principalTask != null)
             {
-                return StatusCode(StatusCodes.Status200OK, await _service.AddTask(principalTask));
+                return await  _service.AddTask(principalTask);
             }
             else
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The task is empty");
+                return null;
             }
         }
+      
 
         /// <summary>
         /// The PUT function update the task
@@ -81,30 +76,32 @@ namespace Project.Controllers
         /// <returns></returns>
         // PUT api/<PrincipalTaskController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutAsync(int id,PrincipalTask principalTask)
+        public Task<bool> PutAsync(int id,PrincipalTask principalTask)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     principalTask.Id = id;
+                    _service.UpdateTask(principalTask);
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
                     if (!PrincipalTaskExists(principalTask.Id))
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest, "The task doesn t exist");
+                        return Task.FromResult(false);
                     }
                     else
                     {
-                        return StatusCode(StatusCodes.Status200OK, await _service.UpdateTask(principalTask));
+                        throw;
                     }
                 }
-                catch (Exception e)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest,e.Message);
-                }
+                return Task.FromResult(true);
             }
             else
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The task is not valid");
+                return Task.FromResult(false);
             }
         }
 
@@ -133,13 +130,14 @@ namespace Project.Controllers
         /// <returns></returns>
         // DELETE api/<PrincipalTaskController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int id)
+        public  Task<bool> DeleteAsync(int id)
         {
             if (PrincipalTaskExists(id) == false)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, "The id is null or the object doesn t exist");
+                return Task.FromResult(false);
             } 
-            return StatusCode(StatusCodes.Status200OK, await _service.DeleteTask(id));
+             _service.DeleteTask(id);
+            return Task.FromResult(true);
         }
     }
 }
