@@ -39,13 +39,7 @@ namespace Project.Controllers
         [HttpGet("{id}")]
         public PrincipalTask GetAsync(int id)
         {
-            if (_service.GetTask(id) == null)
-            {
-                return null;
-            }
-            else { 
                 return _service.GetTask(id);
-                  }
         }
 
         /// <summary>
