@@ -40,11 +40,7 @@ namespace Project.Controllers
         [HttpGet("/childs/{id}")]
         public IEnumerable GetChildsTask(int id)
         {
-<<<<<<< HEAD
                 return _service.GetChilds(id);  
-=======
-             return _service.GetChilds(id);
->>>>>>> 729b374bfc48c148121482a6c58c236ec1d24971
         }
 
         /// <summary>
