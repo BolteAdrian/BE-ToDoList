@@ -2,7 +2,7 @@
 BE for a to do list with .net 6 with 3-tier arhitecture and angular
 FE link : https://github.com/BolteAdrian/FE-ToDoList
 
-
+Business and acces data layer files must be take out of the project before run
 
 Tasks:
 Create database 
