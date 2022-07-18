@@ -140,7 +140,7 @@ namespace Business_access_layer.Services
         {
             try
             {
-                if (id != 0 || _repository.GetById(id)!=null)
+                if (id != 0)
                 {
                     return _repository.GetById(id);
                 }
