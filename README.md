@@ -1,5 +1,5 @@
 # Backend_ToDoList
-BE for a to do list with .net 6 with 3-tier arhitecture and angular
+Backend for a to do list with .net 6 with 3-tier arhitecture and Angular 14 for frontend
 FE link : https://github.com/BolteAdrian/FE-ToDoList
 
 Business and acces data layer files must be take out of the project before run
